@@ -64,13 +64,15 @@ class ShowController extends StudipController {
 		    		$this->tabs[] = array('tab' => $block->getValue('tab'), 
 						 'title' => $block->getValue('title'),
 					  	 'position' => $block->getValue('position'),
-						 'orig_title' => $orig_title[0]['title']
+						 'orig_title' => $orig_title[0]['title'],
+						 'visible' => $block->getValue('tn_visible') ? 'checked': ''
 						);
 			} else if (!in_array($key, $this->ignore_tabs)){
 			      $this->tabs[] = array('tab' => $key,
 						 'title' => $tab->getTitle(), 
 						 'position' => $position,
-						 'orig_title' => $orig_title[0]['title']
+						 'orig_title' => $orig_title[0]['title'],
+						 'visible' => true,
 					  );
 			}
 			$position++;
@@ -105,7 +107,8 @@ class ShowController extends StudipController {
             		'seminar_id' => $this->course_id,
            		'tab'       => $this->tabs['tab_title_'. $i],
 			'title'       => $this->tabs['new_tab_title_'. $i],
-			'position'       => $this->tabs['tab_position_'. $i]
+			'position'       => $this->tabs['tab_position_'. $i],
+			'tn_visible'      => $this->tabs['visible_'. $i] == 'on' ? true : false
         		));	
 
         		$block->store();
@@ -117,6 +120,7 @@ class ShowController extends StudipController {
                                  array($this->course_id,$this->tabs['tab_title_'. $i]));
 			$block->setValue('title', $this->tabs['new_tab_title_'. $i]);
 			$block->setValue('position', $this->tabs['tab_position_'. $i]);
+			$block->setValue('tn_visible', $this->tabs['visible_'. $i] == 'on' ? true : false);
 			$block->store();
 
 		}

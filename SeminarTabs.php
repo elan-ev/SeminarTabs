@@ -81,6 +81,7 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
     }
 	
     private function sortCourseNavigation(){
+	global $perm;
    	$restNavigation;
 	$newNavigation = Navigation::getItem('/course');
 	foreach(Navigation::getItem('/course') as $key => $tab){
@@ -88,7 +89,9 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
                                  array($this->getSeminarId(),$key) );
 		if($block){
 			$tab->setTitle($block->getValue('title'));
-			$subNavigations[$block->getValue('position')][$key] = $tab;	
+			if($block->getValue('tn_visible') == true || $perm->have_studip_perm('dozent', Request::get('cid')) ){
+				$subNavigations[$block->getValue('position')][$key] = $tab;
+			}
 					
 		} else { 
 		   //keine Info bezüglich Reihenfolge also hinten dran
