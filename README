@@ -1,0 +1,6 @@
+- Damit das Plugin alle Inhaltselemente eines Kurses berücksichtigt (also insbesondere auch die von anderen Plugins)
+  muss es als letztes geladen werden.
+- Dh. in der Administrationsübersicht für Plugins muss unter Position eine Zahl eingetragen werden, 
+  die größer ist als die der übrigen Plugins.
+- Nach Installation weiterer Plugins muss diese Zahl nach oben korrigiert werden, 
+  wenn es sich um Plugins handelt, die weitere Inhaltsreiter für Veranstaltungen bereitstellen.
