@@ -24,10 +24,16 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
 		$this->course = Course::findCurrent();
 	 	$this->course_id = $this->course->id;
 		
+		$this->course = Course::findCurrent();
+		if (!$this->course) {
+            		throw new CheckObjectException(_('Sie haben kein Objekt gew�hlt.'));
+        	} else
+		{
 
+		
 		$this->setupStudIPNavigation();	
 		
-	 	if (Navigation::hasItem('/course/admin') && $perm->have_studip_perm('dozent', Request::get('cid'))  ) {
+	 	if (Navigation::hasItem('/course/admin') && $perm->have_studip_perm('dozent', $this->course_id)  ) {
             		$url = PluginEngine::getURL($this);
             		$scormItem = new Navigation(_('Inhaltselemente bearbeiten'), $url);
            		Navigation::addItem('/course/admin/seminar_tabs', $scormItem);
@@ -36,6 +42,7 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
             		$scormItem = new Navigation(_('Inhaltselemente bearbeiten'), $url);
 					Navigation::addItem('/admin/course/seminar_tabs', $scormItem);
 			}
+		}
     }
 
     // bei Aufruf des Plugins Ã¼ber plugin.php/mooc/...
