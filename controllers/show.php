@@ -28,7 +28,8 @@ class ShowController extends StudipController {
             Navigation::activateItem('/admin/course/seminar_tabs');
         } 
 	
-	 $this->ignore_tabs = array('modules');
+	 $this->ignore_tabs = array('modules', 'mini_course');
+	 $this->ignore_visibility_tabs = array('admin', 'main');
 	 $this->course_id = $this->course->id;
 	 $this->sem = Seminar::getInstance($this->course_id);
         $sem_class = $GLOBALS['SEM_CLASS'][$GLOBALS['SEM_TYPE'][$this->sem->status]['class']];
@@ -76,7 +77,7 @@ class ShowController extends StudipController {
 						 'title' => $tab->getTitle(), 
 						 'position' => $position,
 						 'orig_title' => $orig_title[0]['title'],
-						 'visible' => true,
+						 'visible' => 'checked',
 					  );
 			}
 			$position++;

@@ -14,7 +14,14 @@ $tab_num = 0; ?>
 
 <? foreach($tabs as $tab){?>
  	<li name="<?=$tab_num?>" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
- 	<input type="checkbox" name="visible_<?=$tab_num?>" <?=$tab['visible']?>/> 
+ 	<? if(!in_array($tab['tab'], $ignore_visibility_tabs)){ ?>
+		<input type="checkbox" name="visible_<?=$tab_num?>" <?=$tab['visible']?>/> 
+	<? } else {
+	strcmp($tab['visible'],'checked') == 0 ? $visible = 'on': $visible = 'off';
+	?>
+	<input type="hidden" name="visible_<?=$tab_num?>" value="<?=$visible?>"/>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<? } ?> 
  	<input type="hidden" value="<?= $tab['tab']; ?>" name="tab_title_<?=$tab_num?>" />
 	<input value="<?= $tab['title']; ?>" name="new_tab_title_<?=$tab_num?>" size="20"/>
 	<input type="hidden" value="<?= $tab['position']; ?>" name="tab_position_<?=$tab_num?>" />

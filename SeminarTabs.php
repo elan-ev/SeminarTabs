@@ -25,9 +25,7 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
 	 	$this->course_id = $this->course->id;
 		
 		$this->course = Course::findCurrent();
-		if (!$this->course) {
-            		throw new CheckObjectException(_('Sie haben kein Objekt gewählt.'));
-        	} else
+		if ($this->course) 
 		{
 
 		
