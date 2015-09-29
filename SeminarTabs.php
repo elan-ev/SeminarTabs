@@ -87,7 +87,7 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
 	
     private function sortCourseNavigation(){
 	global $perm;
-   	$restNavigation;
+   	$restNavigation = array();
 	$newNavigation = Navigation::getItem('/course');
 	foreach(Navigation::getItem('/course') as $key => $tab){
 		$block = SeminarTab::findOneBySQL('seminar_id = ? AND tab IN (?) ORDER BY position ASC',
@@ -116,8 +116,10 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
 		
 	    }
 	}
+	if(count($restNavigation)>0){
 	foreach($restNavigation as $key => $restNav){
 		$newNavigation->addSubNavigation($key, $restNav);  
+	}
 	}
 
 	Navigation::addItem('/course', $newNavigation);
