@@ -44,7 +44,6 @@ class ShowController extends StudipController {
 
 	$this->courseadmin = $perm->have_studip_perm('tutor', $this->course_id);
 
-
 	//Tabs und zugehörige Einstellung laden
 		$position = 100;
 		foreach( Navigation::getItem('course') as $key=>$tab){
@@ -53,6 +52,46 @@ class ShowController extends StudipController {
 		    $statement = DBManager::get()->prepare($query);
 		    $statement->execute(array('key' => $key));
         	    $orig_title = $statement->fetchAll(PDO::FETCH_ASSOC);
+	
+		    //Spezialfall Reiter die nur TN sehen (zB Courseware Fortschrittsübersicht)
+		    if($key == 'mooc_courseware'){
+			$query2 = "SELECT title FROM `system_tabs` WHERE tab IN (:key)" ;
+		    	$statement2 = DBManager::get()->prepare($query2);
+		    	$statement2->execute(array('key' => 'mooc_progress'));
+        	    	$orig_title2 = $statement2->fetchAll(PDO::FETCH_ASSOC);
+		    
+			if (!$orig_title2[0]){
+				$values2 = array('id' => md5('mooc_progress'), 'tab' => 'mooc_progress', 'title' => 'Fortschrittsübersicht');
+				$query2 = "INSERT INTO `system_tabs` (`id`, `tab`, `title`) VALUES (:id, :tab, :title)" ;
+				$statement2 = DBManager::get()->prepare($query2);
+				$statement2->execute($values2);
+				$orig_title2[0]['title'] = "Fortschrittsübersicht";
+		        }
+
+			
+		    	$block = SeminarTab::findOneBySQL('seminar_id = ? AND tab IN (?) ORDER BY position ASC',
+                                 array($this->course_id, 'mooc_progress') );
+			if ($block){
+		    		$this->tabs[] = array('tab' => $block->getValue('tab'), 
+						 'title' => $block->getValue('title'),
+					  	 'position' => $block->getValue('position'),
+						 'orig_title' => $orig_title2[0]['title'],
+						 'visible' => $block->getValue('tn_visible') ? 'checked': ''
+						);
+			} else {
+			      $this->tabs[] = array('tab' => 'mooc_progress',
+						 'title' => 'Fortschrittsübersicht', 
+						 'position' => $position,
+						 'orig_title' => $orig_title2[0]['title'],
+						 'visible' => 'checked',
+					  );
+			}
+			$position++;
+		    } 
+		    //Ende Sonderfall
+
+
+		    
 		    
 		    if (!$orig_title[0]){
 			$values = array('id' => md5($key), 'tab' => $key, 'title' => $tab->getTitle());
