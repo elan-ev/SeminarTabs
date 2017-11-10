@@ -32,6 +32,8 @@ $tab_num = 0; ?>
 }?>
 
 </ul>
+<br/>
+<p>Um die Ansicht für Ihre Teilnehmenden zu überprüfen, klicken Sie <a class="default" href="<?= URLHelper::getLink('dispatch.php/course/change_view/set_changed_view') ?>">hier</a></p>
 
 <input type="hidden" name="tab_num" value="<?=$tab_num?>" />
 <p><button title="Änderungen übernehmen" name="submit" class="button" type="submit">Übernehmen</button></p>

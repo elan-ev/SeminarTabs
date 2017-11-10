@@ -37,7 +37,7 @@ class ShowController extends StudipController {
         $this->studygroup_mode = $SEM_CLASS[$SEM_TYPE[$this->sem->status]["class"]]["studygroup_mode"];
 	 }
     }
-
+    
     public function index_action() {
 	
 	global $perm;
@@ -94,8 +94,8 @@ class ShowController extends StudipController {
 		    
 		    
 		    if (!$orig_title[0]){
-			$values = array('id' => md5($key), 'tab' => $key, 'title' => $tab->getTitle());
-			$query = "INSERT INTO `system_tabs` (`id`, `tab`, `title`) VALUES (:id, :tab, :title)" ;
+			$values = array('tab' => $key, 'title' => $tab->getTitle());
+			$query = "INSERT INTO `system_tabs` (`tab`, `title`) VALUES (:tab, :title)" ;
 			$statement = DBManager::get()->prepare($query);
 			$statement->execute($values);
 			$orig_title[0]['title'] = $tab->getTitle();
