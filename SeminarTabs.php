@@ -17,30 +17,31 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
      * @var Container
      */
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
-		global $perm;
-		$this->course = Course::findCurrent();
-	 	$this->course_id = $this->course->id;
+        global $perm;
+        $this->course = Course::findCurrent();
+         $this->course_id = $this->course->id;
 
-		$this->course = Course::findCurrent();
+        $this->course = Course::findCurrent();
 
-		if ($this->course) {
-    		$this->setupStudIPNavigation();
+        if ($this->course) {
+            $this->setupStudIPNavigation();
 
             $url = PluginEngine::getURL($this);
             $scormItem = new Navigation(_('Inhaltselemente bearbeiten'), $url);
-            $scormItem->setDescription('Anpassen der Reihenfolge der Inhaltselemente');
+            $scormItem->setDescription('Umbenennen und anpassen der Reihenfolge und Sichtbarkeit von Inhaltselementen.');
 
-    	 	if (Navigation::hasItem('/course/admin')
+             if (Navigation::hasItem('/course/admin')
                 && $perm->have_studip_perm('dozent', $this->course_id)
             ) {
-               	Navigation::addItem('/course/admin/seminar_tabs', $scormItem);
+                   Navigation::addItem('/course/admin/seminar_tabs', $scormItem);
             } else if (Navigation::hasItem('/admin/course/details')) {
-    				Navigation::addItem('/admin/course/seminar_tabs', $scormItem);
-			}
-		}
+                    Navigation::addItem('/admin/course/seminar_tabs', $scormItem);
+            }
+        }
     }
 
     // bei Aufruf des Plugins über plugin.php/mooc/...
@@ -49,12 +50,12 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
         PageLayout::addStylesheet($this->getPluginUrl() . '/css/style.css');
         //PageLayout::addStylesheet($this->getPluginURL().'/assets/style.css');
         PageLayout::addScript($this->getPluginURL().'/js/script.js');
-		$this->setupAutoload();
+        $this->setupAutoload();
     }
 
-    public function perform($unconsumed_path) {
-
-	 //$this->setupAutoload();
+    public function perform($unconsumed_path)
+    {
+        //$this->setupAutoload();
         $dispatcher = new Trails_Dispatcher(
             $this->getPluginPath(),
             rtrim(PluginEngine::getLink($this, array(), null), '/'),
@@ -65,7 +66,8 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
 
     }
 
-    private function setupAutoload() {
+    private function setupAutoload()
+    {
         if (class_exists("StudipAutoloader")) {
             StudipAutoloader::addAutoloadPath(__DIR__ . '/models');
         } else {
@@ -75,54 +77,69 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
         }
     }
 
-    private function setupStudIPNavigation(){
+    private function setupStudIPNavigation()
+    {
+        $block = SeminarTab::findOneBySQL(
+            'seminar_id = ? ORDER BY position ASC',
+            [$this->course_id]
+        );
 
-		$block = SeminarTab::findOneBySQL('seminar_id = ? ORDER BY position ASC',
-                                 array($this->course_id) );
-			if($block){
-				$this->sortCourseNavigation();
-			}
-
+        if($block){
+            $this->sortCourseNavigation();
+        }
     }
 
-    private function sortCourseNavigation(){
-	global $perm;
-   	$restNavigation = array();
-	$newNavigation = Navigation::getItem('/course');
-	foreach(Navigation::getItem('/course') as $key => $tab){
-		$block = SeminarTab::findOneBySQL('seminar_id = ? AND tab IN (?) ORDER BY position ASC',
-                                 array($this->getSeminarId(),$key) );
-		if($block){
-			$tab->setTitle($block->getValue('title'));
-			if($block->getValue('tn_visible') == true || $perm->have_studip_perm('dozent', Request::get('cid')) ){
-				$subNavigations[$block->getValue('position')][$key] = $tab;
-			}
+    private function sortCourseNavigation()
+    {
+        global $perm;
 
-		} else {
-		   //keine Info bezüglich Reihenfolge also hinten dran
-		   //greift bei neu aktivierten Navigationselementen
-		   $restNavigation[$key] = $tab;
+        var_dump($perm->have_studip_perm('dozent', Request::get('cid')));
 
-		}
+        $restNavigation = array();
+        $newNavigation = Navigation::getItem('/course');
+        foreach(Navigation::getItem('/course') as $key => $tab) {
+            $block = SeminarTab::findOneBySQL(
+                'seminar_id = ? AND tab IN (?) ORDER BY position ASC',
+                [$this->getSeminarId(),$key]
+            );
 
-		$newNavigation->removeSubNavigation($key);
-	}
+            if ($block) {
+                $tab->setTitle($block->getValue('title'));
+                if (
+                    $block->getValue('tn_visible') == true
+                    || (
+                        $perm->have_studip_perm('dozent', Request::get('cid'))
+                        && $_SESSION["seminar_change_view_{$this->course_id}"] != 'autor'
+                    )
+                ) {
+                    $subNavigations[$block->getValue('position')][$key] = $tab;
+                }
 
-	ksort($subNavigations);
+            } else {
+                //keine Info bezüglich Reihenfolge also hinten dran
+                //greift bei neu aktivierten Navigationselementen
+                $restNavigation[$key] = $tab;
+            }
 
-	foreach($subNavigations as $subNavs){
-	    foreach($subNavs as $key => $subNav){
-		$newNavigation->addSubNavigation($key, $subNav);
+            $newNavigation->removeSubNavigation($key);
+        }
 
-	    }
-	}
-	if(count($restNavigation)>0){
-	foreach($restNavigation as $key => $restNav){
-		$newNavigation->addSubNavigation($key, $restNav);
-	}
-	}
+        ksort($subNavigations);
 
-	Navigation::addItem('/course', $newNavigation);
+        foreach($subNavigations as $subNavs){
+            foreach($subNavs as $key => $subNav){
+            $newNavigation->addSubNavigation($key, $subNav);
+
+            }
+        }
+
+        if (count($restNavigation)>0) {
+            foreach($restNavigation as $key => $restNav) {
+                $newNavigation->addSubNavigation($key, $restNav);
+            }
+        }
+
+        Navigation::addItem('/course', $newNavigation);
     }
 
     static function getSeminarId()
@@ -140,17 +157,17 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
     }
 
     public function getInfoTemplate($course_id){
-	return null;
+        return null;
     }
+
     public function getIconNavigation($course_id, $last_visit, $user_id){
-	return null;
+        return null;
     }
+
     public function getTabNavigation($course_id){
-	return null;
+        return null;
     }
+
     function getNotificationObjects($course_id, $since, $user_id){
     }
-
-
-
 }
