@@ -25,20 +25,20 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
 	 	$this->course_id = $this->course->id;
 
 		$this->course = Course::findCurrent();
-		if ($this->course)
-		{
 
+		if ($this->course) {
+    		$this->setupStudIPNavigation();
 
-		$this->setupStudIPNavigation();
+            $url = PluginEngine::getURL($this);
+            $scormItem = new Navigation(_('Inhaltselemente bearbeiten'), $url);
+            $scormItem->setDescription('Anpassen der Reihenfolge der Inhaltselemente');
 
-	 	if (Navigation::hasItem('/course/admin') && $perm->have_studip_perm('dozent', $this->course_id)  ) {
-            		$url = PluginEngine::getURL($this);
-            		$scormItem = new Navigation(_('Inhaltselemente bearbeiten'), $url);
-           		Navigation::addItem('/course/admin/seminar_tabs', $scormItem);
-        	} else if (Navigation::hasItem('/admin/course/details')){
-					$url = PluginEngine::getURL($this);
-            		$scormItem = new Navigation(_('Inhaltselemente bearbeiten'), $url);
-					Navigation::addItem('/admin/course/seminar_tabs', $scormItem);
+    	 	if (Navigation::hasItem('/course/admin')
+                && $perm->have_studip_perm('dozent', $this->course_id)
+            ) {
+               	Navigation::addItem('/course/admin/seminar_tabs', $scormItem);
+            } else if (Navigation::hasItem('/admin/course/details')) {
+    				Navigation::addItem('/admin/course/seminar_tabs', $scormItem);
 			}
 		}
     }
