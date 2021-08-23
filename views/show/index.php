@@ -1,10 +1,10 @@
 <form action="<?=$controller->url_for('/show/save/');?>" method="post">
 <input name="new_order" value="" type="hidden" />
-<p> Hier können Sie die verwendeten Inhaltselemente
+<p> Hier kÃ¶nnen Sie die verwendeten Inhaltselemente
 <ul>
 <li>sortieren,</li>
 <li>umbenennen und</li>
-<li>die Sichtbarkeit für Teilnehmende ausschalten</li>
+<li>die Sichtbarkeit fÃ¼r Teilnehmende ausschalten</li>
 </ul>
 </p>
 <?	
@@ -33,10 +33,10 @@ $tab_num = 0; ?>
 
 </ul>
 <br/>
-<p>Um die Ansicht für Ihre Teilnehmenden zu überprüfen, klicken Sie <a class="default" href="<?= URLHelper::getLink('dispatch.php/course/change_view/set_changed_view') ?>">hier</a></p>
+<p>Um die Ansicht fÃ¼r Ihre Teilnehmenden zu Ã¼berprÃ¼fen, klicken Sie <a class="default" href="<?= URLHelper::getLink('dispatch.php/course/change_view/set_changed_view') ?>">hier</a></p>
 
 <input type="hidden" name="tab_num" value="<?=$tab_num?>" />
-<p><button title="Änderungen übernehmen" name="submit" class="button" type="submit">Übernehmen</button></p>
+<p><button title="Ã„nderungen Ã¼bernehmen" name="submit" class="button" type="submit">Ãœbernehmen</button></p>
 </form>
 
 

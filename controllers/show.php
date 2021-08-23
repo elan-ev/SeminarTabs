@@ -18,7 +18,7 @@ class ShowController extends StudipController {
 	$this->set_layout($GLOBALS['template_factory']->open('layouts/base_without_infobox'));
        $this->course = Course::findCurrent();
 	 if (!$this->course) {
-            throw new CheckObjectException(_('Sie haben kein Objekt gewählt.'));
+            throw new CheckObjectException(_('Sie haben kein Objekt gewÃ¤hlt.'));
         }
 	 else {
 
@@ -44,7 +44,7 @@ class ShowController extends StudipController {
 
 	$this->courseadmin = $perm->have_studip_perm('tutor', $this->course_id);
 
-	//Tabs und zugehörige Einstellung laden
+	//Tabs und zugehÃ¶rige Einstellung laden
 		$position = 100;
 		foreach( Navigation::getItem('course') as $key=>$tab){
 		    //systemtabs anlegen/abfragen
@@ -53,7 +53,7 @@ class ShowController extends StudipController {
 		    $statement->execute(array('key' => $key));
         	    $orig_title = $statement->fetchAll(PDO::FETCH_ASSOC);
 	
-		    //Spezialfall Reiter die nur TN sehen (zB Courseware Fortschrittsübersicht)
+		    //Spezialfall Reiter die nur TN sehen (zB Courseware FortschrittsÃ¼bersicht)
 		    if($key == 'mooc_courseware'){
 			$query2 = "SELECT title FROM `system_tabs` WHERE tab IN (:key)" ;
 		    	$statement2 = DBManager::get()->prepare($query2);
@@ -61,11 +61,11 @@ class ShowController extends StudipController {
         	    	$orig_title2 = $statement2->fetchAll(PDO::FETCH_ASSOC);
 		    
 			if (!$orig_title2[0]){
-				$values2 = array('id' => md5('mooc_progress'), 'tab' => 'mooc_progress', 'title' => 'Fortschrittsübersicht');
+				$values2 = array('id' => md5('mooc_progress'), 'tab' => 'mooc_progress', 'title' => 'FortschrittsÃ¼bersicht');
 				$query2 = "INSERT INTO `system_tabs` (`id`, `tab`, `title`) VALUES (:id, :tab, :title)" ;
 				$statement2 = DBManager::get()->prepare($query2);
 				$statement2->execute($values2);
-				$orig_title2[0]['title'] = "Fortschrittsübersicht";
+				$orig_title2[0]['title'] = "FortschrittsÃ¼bersicht";
 		        }
 
 			
@@ -80,7 +80,7 @@ class ShowController extends StudipController {
 						);
 			} else {
 			      $this->tabs[] = array('tab' => 'mooc_progress',
-						 'title' => 'Fortschrittsübersicht', 
+						 'title' => 'FortschrittsÃ¼bersicht', 
 						 'position' => $position,
 						 'orig_title' => $orig_title2[0]['title'],
 						 'visible' => 'checked',
