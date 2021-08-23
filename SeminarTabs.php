@@ -93,8 +93,6 @@ class SeminarTabs extends StudIPPlugin implements StandardPlugin
     {
         global $perm;
 
-        var_dump($perm->have_studip_perm('dozent', Request::get('cid')));
-
         $restNavigation = array();
         $newNavigation = Navigation::getItem('/course');
         foreach(Navigation::getItem('/course') as $key => $tab) {
