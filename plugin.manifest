@@ -3,4 +3,4 @@ pluginclassname=SeminarTabs
 origin=elan-ev
 version=1.2
 studipMinVersion=4.0
-studipMinVersion=4.6.99
+studipMaxVersion=4.6.99
